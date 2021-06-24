@@ -7,14 +7,10 @@ DATA_STREAM_ENDPOINT = 'wss://stream.binance.com:9443/ws'
 BTC_USDT_KLINE = "/btcusdt@kline_1m"
 ETH_USDT_KLINE = "/ethusdt@kline_1m"
 BNB_BTC_KLINE = "/bnbbtc@kline_1m"
-LOGGING_RATE_CODES = ['BTCUSDT', 'ETHUSDT', 'BNBBTC']
+LOGGING_RATE_CODES = {'BTCUSDT': [], 'ETHUSDT': [], 'BNBBTC': []}
 FILTER_WINDOW_WIDTH = 7  # must be > 0
 LOG_FILE_PATH = './logfile.csv'
 ERROR_LOG_FILE_PATH = './error.log'
-
-BTC_USDT_BUFFER = []
-ETH_USDT_BUFFER = []
-BNB_BTC_BUFFER = []
 
 def on_message(ws, message):
     def calculate(data_dict, data_list):
@@ -28,7 +24,7 @@ def on_message(ws, message):
         if messageDict['k']['x']:
             rate_code = messageDict['s']
             if rate_code in LOGGING_RATE_CODES:
-                result = calculate(messageDict, BTC_USDT_BUFFER)
+                result = calculate(messageDict, LOGGING_RATE_CODES[rate_code])
                 with open(LOG_FILE_PATH, 'a') as file:
                     file.write("{}; {}; {}\n".format(rate_code,
                                                      datetime.utcfromtimestamp(messageDict['k']['T'] / 1000).isoformat(),
